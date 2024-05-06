@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Gateway</title>
+  </head>
+  <style>
+    /* Add basic styling for a cleaner look */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    section {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #message {
+      text-align: center;
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+  <body>
+    <h1>Payment Form</h1>
+    <form id="form">
+      <section id="order">
+        <h2>Order Details</h2>
+        <div>
+          <label for="amount">Price:</label>
+          <input type="number" id="amount" name="amount" min="1" required />
+        </div>
+        <div>
+          <label for="currency">Currency:</label>
+          <select id="currency" name="currency" required>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="AUD">AUD</option>
+            <option value="THB">THB</option>
+            <option value="HKD">HKD</option>
+            <option value="SGD">SGD</option>
+          </select>
+        </div>
+        <div>
+          <label for="fullName">Customer Full Name:</label>
+          <input type="text" id="fullName" name="customerName" required />
+        </div>
+      </section>
+      <section id="payment">
+        <h2>Payment Details</h2>
+        <div>
+          <label for="cardholderName">Cardholder Name:</label>
+          <input
+            type="text"
+            id="cardholderName"
+            name="cardHolderName"
+            required
+          />
+        </div>
+        <div>
+          <label for="cardNumber">Credit Card Number:</label>
+          <input type="text" id="cardNumber" name="creditCardNumber" required />
+        </div>
+        <div>
+          <label for="expirationMonth">Expiry Month:</label>
+          <input
+            type="number"
+            id="expirationMonth"
+            name="expirationMonth"
+            min="1"
+            max="12"
+            required
+          />
+        </div>
+        <div>
+          <label for="expirationYear">Expiry Year:</label>
+          <input
+            type="number"
+            id="expirationYear"
+            name="expirationYear"
+            min="2024"
+            required
+          />
+        </div>
+        <div>
+          <label for="ccv">CVV:</label>
+          <input type="password" id="ccv" name="ccv" required />
+        </div>
+      </section>
+      <button type="submit">Pay Now</button>
+    </form>
+    <div id="message"></div>
+    <script>
+      const form = document.getElementById("form");
+      const message = document.getElementById("message");
+
+      console.log(Object.fromEntries(new FormData(form)));
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        try {
+          const response = await fetch("http://localhost:3005/api/payment", {
+            method: "POST",
+            body: JSON.stringify(Object.fromEntries(new FormData(form))),
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+          const data = await response.json();
+          message.textContent = data.message;
+        } catch (error) {
+          console.error(error);
+          message.textContent = "Payment failed!";
+        }
+      });
+    </script>
+  </body>
+</html>
